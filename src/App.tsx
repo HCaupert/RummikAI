@@ -163,8 +163,21 @@ export function App() {
             <h2 className="text-sm font-medium text-emerald-200 mb-3 flex items-center gap-2">
               <span className="w-5 h-5 rounded-full bg-emerald-500 text-white text-xs flex items-center justify-center font-bold">2</span>
               Detected cards
+              <span className="text-xs text-emerald-400/60 font-normal">(tap to edit)</span>
             </h2>
-            <GameStateView hand={hand} board={board} />
+            <GameStateView
+              hand={hand}
+              board={board}
+              editable={true}
+              onHandChange={(newHand) => {
+                setHand(newHand);
+                setSolutions(null);
+              }}
+              onBoardChange={(newBoard) => {
+                setBoard(newBoard);
+                setSolutions(null);
+              }}
+            />
           </section>
         )}
 

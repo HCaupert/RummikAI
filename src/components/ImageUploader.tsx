@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { cn } from "../lib/utils";
-import { Camera, Loader2, Check, AlertCircle } from "lucide-react";
+import { Camera, Loader2, Check, AlertCircle, ImagePlus } from "lucide-react";
 
 type ImageUploaderProps = {
   label: string;
@@ -83,8 +83,12 @@ export function ImageUploader({
           </>
         ) : (
           <div className="flex flex-col items-center gap-2 text-white/70">
-            <Camera className="w-8 h-8" />
-            <span className="text-xs font-medium">Tap to capture</span>
+            <div className="flex items-center gap-3">
+              <Camera className="w-6 h-6" />
+              <span className="text-white/30">|</span>
+              <ImagePlus className="w-6 h-6" />
+            </div>
+            <span className="text-xs font-medium">Photo or upload</span>
           </div>
         )}
 
@@ -119,7 +123,6 @@ export function ImageUploader({
         <input
           type="file"
           accept="image/*"
-          capture="environment"
           className="hidden"
           onChange={handleChange}
         />
