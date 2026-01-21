@@ -1,12 +1,8 @@
-import { createAnthropic } from "@ai-sdk/anthropic";
-import { generateObject } from "ai";
-import { ParsedTilesSchema, type ParsedTiles } from "../lib/schemas";
-import type { Tile, Board, Shape, TileNumber } from "../types";
-import { findValidPartitions } from "../solver";
-
-const anthropic = createAnthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
+import {generateText, Output} from "ai";
+import {ParsedTilesSchema, type ParsedTiles} from "../lib/schemas";
+import type {Tile, Board, Shape, TileNumber} from "../types";
+import {findValidPartitions} from "../solver";
+import {openrouter} from "@openrouter/ai-sdk-provider";
 
 const PARSE_PROMPT = `You are analyzing a photo of playing cards for a Rummy game.
 Identify ALL cards visible in the image and return them as a structured list.
@@ -36,21 +32,23 @@ function transformToTiles(parsed: ParsedTiles): Tile[] {
 }
 
 export async function parseTilesFromImage(imageBase64: string): Promise<Tile[]> {
-  const result = await generateObject({
-    model: anthropic("claude-haiku-4-5"),
-    schema: ParsedTilesSchema,
+  const result = await generateText({
+    model: openrouter(process.env.AI_MODEL ?? "openai/gpt-5.2"),
+    output: Output.object({
+      schema: ParsedTilesSchema,
+    }),
     messages: [
+      {role: "system", content: PARSE_PROMPT},
       {
         role: "user",
         content: [
-          { type: "text", text: PARSE_PROMPT },
           { type: "image", image: imageBase64 },
         ],
       },
     ],
   });
 
-  return transformToTiles(result.object);
+  return transformToTiles(result.output);
 }
 
 export async function parseHand(imageBase64: string): Promise<{ hand: Tile[] } | { error: string }> {
